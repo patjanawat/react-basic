@@ -6,12 +6,16 @@ const Item = (props) => {
   const statusClass = amount < 0 ? "expense" : "income";
   const symbol = amount < 0 ? "-" : "+";
 
+  const formatNumber=(number)=>{
+    return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    }
+
   return (
     <div>
       <li className={statusClass}>
         {title}{" "}
         <span>
-          {symbol} {Math.abs(amount)}
+          {symbol} {formatNumber(Math.abs(amount).toFixed(2))}
         </span>
       </li>
     </div>
