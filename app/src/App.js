@@ -28,6 +28,8 @@ const App = () => {
   const [items, setItems] = useState(initState);
   const [reportIncome,setReportIncome] = useState(0)
   const [reportExpense,setReportExpense] = useState(0)
+  const [showReport,setShowReport] = useState(false)
+  const [showReportButton,setShowReportButton] = useState(true)
   
   const onAddNewItem = (newItem) => {
     setItems((prev) => {
@@ -43,41 +45,44 @@ const App = () => {
     setReportIncome(income)
     setReportExpense(expense)
   },[items,reportIncome,reportExpense])
-
-  const [count,setCount] = useState(0)
+  
   const reducer = (state,action)=>{
     switch (action.type) {
-      case "ADD":
-        return state + action.increse
-      case "SUB": return state - action.decrese
-      case "CLEAR": return 0
+      case "SHOW":{
+        setShowReportButton(false)              
+        return setShowReport(true)
+      }
+      case "HIDE": {
+        setShowReportButton(true)                
+        return setShowReport(false)
+      }
     }
   }
+  
+  const [result,dispatch]= useReducer(reducer,showReport)
 
-  const [result,dispatch] = useReducer(reducer,count)
 
+  useEffect(()=>{
+    const isShow =showReportButton     
+  },[showReportButton])
   return (
-    // <DataContext.Provider
-    //   value={{
-    //     income: reportIncome,
-    //     expense: reportExpense,
-    //   }}
-    // >
-    //   <div className="container">
-    //     <h1 style={{ color: "red", textAlign: "center", fontSize: "1.5em" }}>
-    //       แอพบัญชีรายรับ-รายจ่าย
-    //     </h1>
-    //     <ReportComponent />
-    //     <FormComponent onAddItem={onAddNewItem} />
-    //     <Transaction items={items} />
-    //   </div>
-    // </DataContext.Provider>
-    <div align="center">
-      <h1>{result}</h1>
-      <button onClick={()=>dispatch({type:"ADD",increse:10})}>เพิ่ม</button>
-      <button onClick={()=>dispatch({type:"SUB",decrese:5})}>ลด</button>
-      <button onClick={()=>dispatch({type:"CLEAR"})}>ล้าง</button>
-    </div>
+    <DataContext.Provider
+      value={{
+        income: reportIncome,
+        expense: reportExpense,
+      }}
+    >
+      <div className="container">
+        <h1 style={{ color: "red", textAlign: "center", fontSize: "1.5em" }}>
+          แอพบัญชีรายรับ-รายจ่าย
+        </h1>
+        <button onClick={()=>dispatch({type:"SHOW"})} disabled={!showReportButton} >แสดง</button>
+        <button onClick={()=>dispatch({type:"HIDE"})} disabled={showReportButton}>ซ่อน</button>
+        {showReport && <ReportComponent />}        
+        <FormComponent onAddItem={onAddNewItem} />
+        <Transaction items={items} />             
+      </div>
+    </DataContext.Provider>
   );
 };
 
