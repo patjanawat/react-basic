@@ -1,7 +1,7 @@
 import Transaction from "./components/Transaction";
 import "./App.css";
 import FormComponent from "./components/FormComponent";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import DataContext from "./data/dataContext";
 import ReportComponent from "./components/ReportComponent";
 import Item from "./components/Item";
@@ -44,22 +44,40 @@ const App = () => {
     setReportExpense(expense)
   },[items,reportIncome,reportExpense])
 
+  const [count,setCount] = useState(0)
+  const reducer = (state,action)=>{
+    switch (action.type) {
+      case "ADD":
+        return state + action.increse
+      case "SUB": return state - action.decrese
+      case "CLEAR": return 0
+    }
+  }
+
+  const [result,dispatch] = useReducer(reducer,count)
+
   return (
-    <DataContext.Provider
-      value={{
-        income: reportIncome,
-        expense: reportExpense,
-      }}
-    >
-      <div className="container">
-        <h1 style={{ color: "red", textAlign: "center", fontSize: "1.5em" }}>
-          แอพบัญชีรายรับ-รายจ่าย
-        </h1>
-        <ReportComponent />
-        <FormComponent onAddItem={onAddNewItem} />
-        <Transaction items={items} />
-      </div>
-    </DataContext.Provider>
+    // <DataContext.Provider
+    //   value={{
+    //     income: reportIncome,
+    //     expense: reportExpense,
+    //   }}
+    // >
+    //   <div className="container">
+    //     <h1 style={{ color: "red", textAlign: "center", fontSize: "1.5em" }}>
+    //       แอพบัญชีรายรับ-รายจ่าย
+    //     </h1>
+    //     <ReportComponent />
+    //     <FormComponent onAddItem={onAddNewItem} />
+    //     <Transaction items={items} />
+    //   </div>
+    // </DataContext.Provider>
+    <div align="center">
+      <h1>{result}</h1>
+      <button onClick={()=>dispatch({type:"ADD",increse:10})}>เพิ่ม</button>
+      <button onClick={()=>dispatch({type:"SUB",decrese:5})}>ลด</button>
+      <button onClick={()=>dispatch({type:"CLEAR"})}>ล้าง</button>
+    </div>
   );
 };
 
