@@ -1,33 +1,51 @@
 import "./FormComponent.css"
+import { useState, useEffect}  from "react"
+import { v4 as uuidv4 } from 'uuid';
 
-const FormComponent = ()=>{
+const FormComponent = (props)=>{
+    //define state
+    const [title,setTitle]=useState('')
+    const [amount,setAmount]=useState(0)
+    const [formValid,setFormValid]=useState(false)
+
     const inputTitle = (event)=>{        
-        console.log('title onchange...')
-        console.log(event.target.value)
+        setTitle(event.target.value)
     }
 
     const inputAmount =(event)=>{        
-        console.log('amount onchange...')
-        console.log(event.target.value)
+        setAmount(event.target.value)
     }
 
     const saveItem = (event)=>{
-        console.log('Form submit...')
         event.preventDefault()
+        const itemData = {
+            id: uuidv4(),
+            title: title,
+            amount: Number(amount)
+        }
+        props.onAddItem(itemData)
+        setTitle('')
+        setAmount(0)
     }
+
+    useEffect(()=>{
+        // const checkData = title.trim().length > 0 && Number(amount) !==0
+        // setFormValid(checkData)
+    },[title,amount])
+
     return (
         <div>
             <form onSubmit={saveItem}>
                 <div className="form-control">
                     <label>รายการ</label>
-                    <input type="text" placeholder="รายการ" onChange={inputTitle}/>
+                    <input type="text" placeholder="รายการ" onChange={inputTitle} value={title}/>
                 </div>
                 <div className="form-control">
                     <label>จำนวน</label>
-                    <input type="number" placeholder="(+ รายรับ, - รายจ่าย)" onChange={inputAmount}/>
+                    <input type="number" placeholder="(+ รายรับ, - รายจ่าย)" onChange={inputAmount} value={amount}/>
                 </div>
                 <div>
-                    <button type="submit" className="btn">เพิ่มข้อมูล</button>
+                    <button type="submit" className="btn" disabled={formValid}>เพิ่มข้อมูล</button>
                 </div>
             </form>
         </div>
